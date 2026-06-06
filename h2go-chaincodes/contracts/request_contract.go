@@ -302,38 +302,31 @@ func (rc *RequestContract) ApproveRequest(
 
 	// Redeem collected electricity GdOs for H2 requests
 	if assetType == string(models.H2) && len(electricityGdOsToRedeem) > 0 {
-		rdpContract := RedemptionContract{}
-		err = rdpContract.RedeemGdOs(ctx, producerID, string(models.Electricity), electricityGdOsToRedeem)
-		if err != nil {
-			return err
+		electricityIDsSet := make(map[string]struct{})
+		for _, id := range electricityGdOsToRedeem {
+			electricityIDsSet[id] = struct{}{}
 		}
-	}
 
-	productorBalance, err := ctx.GetStub().GetState(producerID)
-	if err != nil {
-		return err
-	}
-	productorBalanceRecord = models.ProductorBalance{}
-	if productorBalance != nil {
-		err = json.Unmarshal(productorBalance, &productorBalanceRecord)
-		if err != nil {
-			return err
+		updatedAvailable := make([]models.GdO, 0)
+		for _, gdo := range productorBalanceRecord.GdOS.Electricity.Available {
+			if _, shouldRedeem := electricityIDsSet[gdo.GdoID]; shouldRedeem {
+				gdo.Status = models.GdoUsed
+				productorBalanceRecord.GdOS.Electricity.Unavailable = append(
+					productorBalanceRecord.GdOS.Electricity.Unavailable, gdo)
+				gdoJSON, err := json.Marshal(gdo)
+				if err != nil {
+					return err
+				}
+				err = ctx.GetStub().PutState(gdo.GdoID, gdoJSON)
+				if err != nil {
+					return err
+				}
+			} else {
+				updatedAvailable = append(updatedAvailable, gdo)
+			}
 		}
-	} else {
-		productorBalanceRecord = models.ProductorBalance{
-			TransactionType: "gdoBalance",
-			ProducerID:      producerID,
-			GdOS: models.GdOsByAssetType{
-				Electricity: models.GdOsByStatus{
-					Available:   make([]models.GdO, 0),
-					Unavailable: make([]models.GdO, 0),
-				},
-				H2: models.GdOsByStatus{
-					Available:   make([]models.GdO, 0),
-					Unavailable: make([]models.GdO, 0),
-				},
-			},
-		}
+		productorBalanceRecord.GdOS.Electricity.Available = updatedAvailable
+
 	}
 
 	// Add GdOs to the correct list based on asset type and status
