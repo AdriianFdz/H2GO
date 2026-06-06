@@ -519,23 +519,7 @@ func (rdpc *RedemptionContract) AcceptTradeRequest(
 	err = ctx.GetStub().PutState(trade.ProducerID, producerBalanceJSON)
 	if err != nil {
 		return err
-	}err = json.Unmarshal(ownerBalance, &productorBalanceRecord)
-if err != nil {
-    return nil, err
-}
-
-// Normalize nil slices to empty slices
-for key, gdoBalance := range productorBalanceRecord.Gdos {
-    if gdoBalance.Available == nil {
-        gdoBalance.Available = []string{}
-    }
-    if gdoBalance.Unavailable == nil {
-        gdoBalance.Unavailable = []string{}
-    }
-    productorBalanceRecord.Gdos[key] = gdoBalance
-}
-
-return &productorBalanceRecord, nil
+	}
 
 	// Update trade request
 	trade.Status = models.RequestApproved
