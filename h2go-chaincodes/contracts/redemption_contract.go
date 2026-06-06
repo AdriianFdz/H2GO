@@ -166,12 +166,7 @@ func (rdpc *RedemptionContract) GetProducerBalance(ctx contractapi.TransactionCo
 	}
 
 	var productorBalanceRecord models.ProductorBalance
-	err = json.Unmarshal(ownerBalance, &productorBalanceRecord)
-	if err != nil {
-		return nil, err
-	}
-
-	return &productorBalanceRecord, nil
+	
 }
 
 func (rdpc *RedemptionContract) CreateTradeRequest(
@@ -451,7 +446,7 @@ func (rdpc *RedemptionContract) AcceptTradeRequest(
 	}
 
 	gdosToTransfer := make([]models.GdO, 0)
-	var updatedTargetAvailable []models.GdO
+	updatedTargetAvailable := make([]models.GdO, 0)
 
 	var targetAvailable []models.GdO
 	if trade.AssetType == models.Electricity {
