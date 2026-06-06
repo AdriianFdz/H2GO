@@ -171,14 +171,17 @@ func (rdpc *RedemptionContract) GetProducerBalance(ctx contractapi.TransactionCo
 		return nil, err
 	}
 
-	for key, gdoBalance := range productorBalanceRecord.Gdos {
-		if gdoBalance.Available == nil {
-			gdoBalance.Available = []string{}
-		}
-		if gdoBalance.Unavailable == nil {
-			gdoBalance.Unavailable = []string{}
-		}
-		productorBalanceRecord.Gdos[key] = gdoBalance
+	if productorBalanceRecord.GdOS.Electricity.Available == nil {
+		productorBalanceRecord.GdOS.Electricity.Available = make([]models.GdO, 0)
+	}
+	if productorBalanceRecord.GdOS.Electricity.Unavailable == nil {
+		productorBalanceRecord.GdOS.Electricity.Unavailable = make([]models.GdO, 0)
+	}
+	if productorBalanceRecord.GdOS.H2.Available == nil {
+		productorBalanceRecord.GdOS.H2.Available = make([]models.GdO, 0)
+	}
+	if productorBalanceRecord.GdOS.H2.Unavailable == nil {
+		productorBalanceRecord.GdOS.H2.Unavailable = make([]models.GdO, 0)
 	}
 
 	return &productorBalanceRecord, nil
