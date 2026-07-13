@@ -8,7 +8,7 @@ const errorRate     = new Rate('errors');
 const txCount       = new Counter('transactions_completed');
 
 const BASE_URL    = __ENV.BASE_URL || 'http://localhost:3003';
-const PRODUCER_ID = '4f2cc8c6-21b9-46ae-a594-850b272c5f9a';
+const PRODUCER_ID = 'e5f2d906-fd68-4f8e-ac40-0b01f6b52fe1';
 
 export const options = {
   stages: [
