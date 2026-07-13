@@ -102,9 +102,9 @@ export class ConnectionManager {
       client,
       identity,
       signer,
-      evaluateOptions: () => ({ deadline: Date.now() + 5000 }),
+      evaluateOptions: () => ({ deadline: Date.now() + 15000 }),
       endorseOptions: () => ({ deadline: Date.now() + 15000 }),
-      submitOptions: () => ({ deadline: Date.now() + 5000 }),
+      submitOptions: () => ({ deadline: Date.now() + 15000 }),
       commitStatusOptions: () => ({ deadline: Date.now() + 60000 }),
     });
 
